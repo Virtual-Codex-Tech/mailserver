@@ -3,7 +3,7 @@ services:
     name: laravel-backend
     env: docker
     docker:
-      dockerfile: Dockerfile
+      dockerfilePath: ./Dockerfile  # ← Especifica explícitamente
     envVars:
       - key: APP_ENV
         value: production
