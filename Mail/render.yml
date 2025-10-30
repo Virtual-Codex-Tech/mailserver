@@ -9,18 +9,6 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
-      - key: APP_KEY
-        generateValue: true
-      - key: APP_URL
-        fromService:
-          type: web
-          name: laravel-backend
-          property: url
+      # NO agregues APP_KEY aquí, déjala que se genere
     healthCheckPath: /api/health
     autoDeploy: true
-
-databases:
-  - name: laraveldb
-    databaseName: laravel
-    user: laraveluser
-    plan: free

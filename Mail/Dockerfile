@@ -28,9 +28,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy existing application directory
 COPY . .
 
-# Copy configuration files
-COPY docker/nginx.conf /etc/nginx/sites-available/default
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+# Create necessary directories
+RUN mkdir -p /var/www/storage/framework/sessions \
+    /var/www/storage/framework/views \
+    /var/www/storage/framework/cache
 
 # Install dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --no-progress
@@ -41,8 +42,10 @@ RUN chown -R www-data:www-data /var/www/bootstrap/cache
 RUN chmod -R 775 /var/www/storage
 RUN chmod -R 775 /var/www/bootstrap/cache
 
-# Generate application key if not exists
-RUN php artisan key:generate --force
+# Generate application key only if not set
+RUN if [ ! -f .env ] || ! grep -q "^APP_KEY=base64:" .env; then \
+        php artisan key:generate --force; \
+    fi
 
 # Optimize Laravel
 RUN php artisan config:cache
